@@ -13,6 +13,7 @@
   "dependencies": {
     "body-parser": "^1.19.1",
     "express": "^4.17.1",
+    "joi": "^17.5.0",
     "mssql": "^7.3.0",
     "sequelize": "^6.12.0-beta.3",
     "tedious": "^14.0.0"

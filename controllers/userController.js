@@ -1,5 +1,6 @@
 const db = require("../models");
 const UserModel = db.userModel;
+//class for performing user db operations
 class UserController {
   static addUser = async (req, res) => {
     const userDetails = await UserModel.build({
@@ -85,19 +86,23 @@ class UserController {
   }
   static deleteUser = async (req, res) => {
     const id = req.body.id;
-    const userDetails = await UserModel.destroy({
-      where: { id: id },
-    });
-    if (!userDetails) {
-      return res.status(200).send({
-        status: 404,
-        message: "No data found",
+    if (id) {
+      const userDetails = await UserModel.destroy({
+        where: { id: id },
       });
+      if (!userDetails) {
+        return res.status(200).send({
+          status: 404,
+          message: "No data found",
+        });
+      }
+      res.status(200).send({
+        status: 200,
+        message: "Data Delete Successfully",
+      });
+    } else {
+      res.status(403).send({ message: "id is required" });
     }
-    res.status(200).send({
-      status: 200,
-      message: "Data Delete Successfully",
-    });
   };
   catch(error) {
     console.log(error);
