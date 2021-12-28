@@ -1,27 +1,49 @@
 const joi = require("joi");
 
-const validation = joi.object({
-  name: joi.string().alphanum().trim(true).required(),
-  email: joi.string().alphanum().trim(true).required(),
-  workingAt: joi.string().alphanum().trim(true).required(),
-  address: joi.string().trim(true),
-  phone: joi.string().trim(true),
+const createValidation = joi.object({
+  empname: joi.string().alphanum().trim(true).required(),
+  email: joi.string().trim(true).required(),
+  password: joi.string().min(3).max(15).required().label("Password"),
+  password_confirmation: joi
+    .any()
+    .equal(joi.ref("password"))
+    .required()
+    .label("Confirm password")
+    .options({ messages: { "any.only": "{{#label}} does not match" } }),
 });
 
-const userValidation = async (req, res, next) => {
+const userCreateValidation = async (req, res, next) => {
   const data = {
-    name: req.body.name,
+    empname: req.body.name,
     email: req.body.email,
-    workingAt: req.body.workingAt,
-    address: req.body.address,
-    phone: req.body.phone,
+    password: req.body.password,
+    password_confirmation: req.body.password_confirmation,
   };
-
-  const { error } = validation.validate(data);
+  console.log(data);
+  const { error } = createValidation.validate(data);
   if (error) {
     return res.status(400).send({ err: error.message });
   } else {
     next();
   }
 };
-module.exports = userValidation;
+
+const loginValidation = joi.object({
+  email: joi.string().trim(true).required(),
+  password: joi.string().min(3).max(15).required().label("Password"),
+});
+const userLoginValidation = async (req, res, next) => {
+  const data = {
+    email: req.body.email,
+    password: req.body.password,
+  };
+
+  const { error } = loginValidation.validate(data);
+  if (error) {
+    return res.status(400).send({ err: error.message });
+  } else {
+    next();
+  }
+};
+
+module.exports = { userCreateValidation, userLoginValidation };
